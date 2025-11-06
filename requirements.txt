@@ -1,0 +1,29 @@
+# =========================================
+# 🧠 Medallion Architecture (Bronze → Silver → Gold)
+# PySpark + Storj + Faker (Cloud-ETL Ready)
+# =========================================
+
+# PySpark Core
+pyspark==3.5.1
+
+# AWS S3-compatible SDK (used for Storj connection)
+boto3==1.35.1
+botocore==1.35.1
+
+# For .env files (if you use environment variables later)
+python-dotenv==1.0.1
+
+# YAML for configuration files
+PyYAML==6.0.2
+
+# For progress bars (optional in Faker generation)
+tqdm==4.66.4
+
+# Fake data generation for Bronze simulation
+Faker==30.3.0
+
+# Data manipulation and verification
+pandas==2.2.3
+
+# Requests (used if you later fetch from APIs like AfterShip)
+requests==2.32.3

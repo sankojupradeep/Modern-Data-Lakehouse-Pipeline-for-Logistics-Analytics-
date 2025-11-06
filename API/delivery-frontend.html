@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 Delivery Time Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; background: #f5f5f5; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 5px; display: none; }
+        .error { background: #ffe7e7; color: #d00; }
+        .loading { opacity: 0.6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Check Delivery Time by Country</h1>
+        <p>Enter a country code (e.g., USA, IND) to see average delivery days and expected date.</p>
+        
+        <input type="text" id="countryInput" placeholder="Enter country code (e.g., USA)" maxlength="10">
+        <button onclick="predictDelivery()">Predict Delivery</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function predictDelivery() {
+            const country = document.getElementById('countryInput').value.trim().toUpperCase();
+            if (!country) {
+                alert('Please enter a country code!');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            const button = document.querySelector('button');
+            button.textContent = 'Predicting...';
+            button.disabled = true;
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(`http://localhost:8000/predict/country/?country=${country}`);
+                if (!response.ok) throw new Error(`API error: ${response.status}`);
+                
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                // Display success
+                resultDiv.innerHTML = `
+                    <h3>🇺🇸 Results for ${data.country}</h3>
+                    <p><strong>Average Delivery Days:</strong> ${data.average_delivery_days}</p>
+                    <p><strong>Expected Delivery Date:</strong> ${data.expected_delivery_date}</p>
+                `;
+                resultDiv.className = 'result';  // Success style
+            } catch (error) {
+                // Display error
+                resultDiv.innerHTML = `<p><strong>Error:</strong> ${error.message}</p>`;
+                resultDiv.className = 'result error';
+            }
+
+            resultDiv.style.display = 'block';
+            button.textContent = 'Predict Delivery';
+            button.disabled = false;
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('countryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') predictDelivery();
+        });
+    </script>
+</body>
+</html>
